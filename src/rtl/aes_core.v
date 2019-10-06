@@ -41,13 +41,13 @@ module aes_core(
                 input wire            clk,
                 input wire            reset_n,
 
-                input wire            encdec,
+                // input wire            encdec,
                 input wire            init,
                 input wire            next,
                 output wire           ready,
 
-                input wire [255 : 0]  key,
-                input wire            keylen,
+                // input wire [255 : 0]  key,
+                // input wire            keylen,
 
                 input wire [127 : 0]  block,
                 output wire [127 : 0] result,
@@ -89,20 +89,20 @@ module aes_core(
   wire [127 : 0] round_key;
   wire           key_ready;
 
-  reg            enc_next;
+  // reg            enc_next;
   wire [3 : 0]   enc_round_nr;
   wire [127 : 0] enc_new_block;
   wire           enc_ready;
   wire [31 : 0]  enc_sboxw;
 
-  reg            dec_next;
-  wire [3 : 0]   dec_round_nr;
-  wire [127 : 0] dec_new_block;
-  wire           dec_ready;
+  // reg            dec_next;
+  // wire [3 : 0]   dec_round_nr;
+  // wire [127 : 0] dec_new_block;
+  // wire           dec_ready;
 
-  reg [127 : 0]  muxed_new_block;
-  reg [3 : 0]    muxed_round_nr;
-  reg            muxed_ready;
+  // reg [127 : 0]  muxed_new_block;
+  // reg [3 : 0]    muxed_round_nr;
+  // reg            muxed_ready;
 
   wire [31 : 0]  keymem_sboxw;
 
@@ -117,9 +117,11 @@ module aes_core(
                                .clk(clk),
                                .reset_n(reset_n),
 
-                               .next(enc_next),
+                              //  .next(enc_next),
+                               .next(next),
 
-                               .keylen(keylen),
+
+                              //  .keylen(keylen),
                                .round(enc_round_nr),
                                .round_key(round_key),
 
@@ -132,31 +134,32 @@ module aes_core(
                               );
 
 
-  aes_decipher_block dec_block(
-                               .clk(clk),
-                               .reset_n(reset_n),
+  // aes_decipher_block dec_block(
+  //                              .clk(clk),
+  //                              .reset_n(reset_n),
 
-                               .next(dec_next),
+  //                              .next(dec_next),
 
-                               .keylen(keylen),
-                               .round(dec_round_nr),
-                               .round_key(round_key),
+  //                              .keylen(keylen),
+  //                              .round(dec_round_nr),
+  //                              .round_key(round_key),
 
-                               .block(block),
-                               .new_block(dec_new_block),
-                               .ready(dec_ready)
-                              );
+  //                              .block(block),
+  //                              .new_block(dec_new_block),
+  //                              .ready(dec_ready)
+  //                             );
 
 
   aes_key_mem keymem(
                      .clk(clk),
                      .reset_n(reset_n),
 
-                     .key(key),
-                     .keylen(keylen),
+                    //  .key(key),
+                    //  .keylen(keylen),
                      .init(init),
 
-                     .round(muxed_round_nr),
+                    //  .round(muxed_round_nr),
+                     .round(enc_round_nr),
                      .round_key(round_key),
                      .ready(key_ready),
 
@@ -172,7 +175,8 @@ module aes_core(
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
   assign ready        = ready_reg;
-  assign result       = muxed_new_block;
+  // assign result       = muxed_new_block;
+  assign result       = enc_new_block;
   assign result_valid = result_valid_reg;
 
 
@@ -230,28 +234,28 @@ module aes_core(
   // Controls which of the datapaths that get the next signal, have
   // access to the memory as well as the block processing result.
   //----------------------------------------------------------------
-  always @*
-    begin : encdec_mux
-      enc_next = 1'b0;
-      dec_next = 1'b0;
+  // always @*
+  //   begin : encdec_mux
+  //     enc_next = 1'b0;
+  //     dec_next = 1'b0;
 
-      if (encdec)
-        begin
-          // Encipher operations
-          enc_next        = next;
-          muxed_round_nr  = enc_round_nr;
-          muxed_new_block = enc_new_block;
-          muxed_ready     = enc_ready;
-        end
-      else
-        begin
-          // Decipher operations
-          dec_next        = next;
-          muxed_round_nr  = dec_round_nr;
-          muxed_new_block = dec_new_block;
-          muxed_ready     = dec_ready;
-        end
-    end // encdec_mux
+  //     if (encdec)
+  //       begin
+  //         // Encipher operations
+  //         enc_next        = next;
+  //         muxed_round_nr  = enc_round_nr;
+  //         muxed_new_block = enc_new_block;
+  //         muxed_ready     = enc_ready;
+  //       end
+  //     else
+  //       begin
+  //         // Decipher operations
+  //         dec_next        = next;
+  //         muxed_round_nr  = dec_round_nr;
+  //         muxed_new_block = dec_new_block;
+  //         muxed_ready     = dec_ready;
+  //       end
+  //   end // encdec_mux
 
 
   //----------------------------------------------------------------
@@ -313,7 +317,8 @@ module aes_core(
           begin
             init_state = 1'b0;
 
-            if (muxed_ready)
+            // if (muxed_ready)
+            if (enc_ready)
               begin
                 ready_new         = 1'b1;
                 ready_we          = 1'b1;

@@ -44,7 +44,7 @@ module aes_encipher_block(
 
                           input wire            next,
 
-                          input wire            keylen,
+                          // input wire            keylen,
                           output wire [3 : 0]   round,
                           input wire [127 : 0]  round_key,
 
@@ -61,10 +61,10 @@ module aes_encipher_block(
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
   localparam AES_128_BIT_KEY = 1'h0;
-  localparam AES_256_BIT_KEY = 1'h1;
+  // localparam AES_256_BIT_KEY = 1'h1;
 
   localparam AES128_ROUNDS = 4'ha;
-  localparam AES256_ROUNDS = 4'he;
+  // localparam AES256_ROUNDS = 4'he;
 
   localparam NO_UPDATE    = 3'h0;
   localparam INIT_UPDATE  = 3'h1;
@@ -410,14 +410,14 @@ module aes_encipher_block(
       enc_ctrl_new  = CTRL_IDLE;
       enc_ctrl_we   = 1'b0;
 
-      if (keylen == AES_256_BIT_KEY)
-        begin
-          num_rounds = AES256_ROUNDS;
-        end
-      else
-        begin
+      // if (keylen == AES_256_BIT_KEY)
+      //   begin
+      //     num_rounds = AES256_ROUNDS;
+      //   end
+      // else
+      //   begin
           num_rounds = AES128_ROUNDS;
-        end
+      //   end
 
       case(enc_ctrl_reg)
         CTRL_IDLE:
