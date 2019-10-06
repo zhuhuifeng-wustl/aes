@@ -47,6 +47,7 @@ module aes_core(
                 output wire           ready,
 
                 // input wire [255 : 0]  key,
+                input wire [127 : 0]  key,
                 // input wire            keylen,
 
                 input wire [127 : 0]  block,
@@ -154,7 +155,7 @@ module aes_core(
                      .clk(clk),
                      .reset_n(reset_n),
 
-                    //  .key(key),
+                     .key(key),
                     //  .keylen(keylen),
                      .init(init),
 

@@ -41,6 +41,7 @@ module aes_key_mem(
                    input wire            reset_n,
                   // Disable the different key length, only keep 128
                   //  input wire [255 : 0]  key,
+                   input wire [127 : 0]  key,
                   //  input wire            keylen,
                    input wire            init,
 
@@ -80,7 +81,7 @@ module aes_key_mem(
   reg [127 : 0] key_mem_new;
   reg           key_mem_we;
 
-  // Disable the dynamic AES-key, make it static. 
+  // Disable the different key length, only keep 128
   // reg [127 : 0] prev_key0_reg;
   // reg [127 : 0] prev_key0_new;
   // reg           prev_key0_we;
@@ -139,7 +140,9 @@ module aes_key_mem(
 
       if (!reset_n)
         begin
-          for (i = 0 ; i <= AES_256_NUM_ROUNDS ; i = i + 1)
+          // Disable the different key length, only keep 128
+          // for (i = 0 ; i <= AES_256_NUM_ROUNDS ; i = i + 1)
+          for (i = 0 ; i <= AES_128_NUM_ROUNDS ; i = i + 1)
             key_mem [i] <= 128'h0;
 
           rcon_reg         <= 8'h0;
@@ -161,7 +164,7 @@ module aes_key_mem(
           if (key_mem_we)
             key_mem[round_ctr_reg] <= key_mem_new;
 
-          // Disable the dynamic AES-key, make it static. 
+          // Disable the different key length, only keep 128
           // if (prev_key0_we)
           //   prev_key0_reg <= prev_key0_new;
 
@@ -203,7 +206,7 @@ module aes_key_mem(
       // Default assignments.
       key_mem_new   = 128'h0;
       key_mem_we    = 1'b0;
-      // Disable the dynamic AES-key, make it static. 
+      // Disable the different key length, only keep 128
       // prev_key0_new = 128'h0;
       // prev_key0_we  = 1'b0;
       prev_key1_new = 128'h0;
@@ -220,7 +223,7 @@ module aes_key_mem(
       // Extract words and calculate intermediate values.
       // Perform rotation of sbox word etc.
 
-      // Disable the dynamic AES-key, make it static. 
+      // Disable the different key length, only keep 128
       // w0 = prev_key0_reg[127 : 096];
       // w1 = prev_key0_reg[095 : 064];
       // w2 = prev_key0_reg[063 : 032];
@@ -243,13 +246,16 @@ module aes_key_mem(
         begin
           rcon_set   = 1'b0;
           key_mem_we = 1'b1;
+          // Disable the different key length, only keep 128
           // case (keylen)
           //   AES_128_BIT_KEY:
           //     begin
                 if (round_ctr_reg == 0)
                   begin
-                    key_mem_new   = key[255 : 128];
-                    prev_key1_new = key[255 : 128];
+                    // key_mem_new   = key[255 : 128];
+                    // prev_key1_new = key[255 : 128];
+                    key_mem_new   = key[127 : 0];
+                    prev_key1_new = key[127 : 0];
                     prev_key1_we  = 1'b1;
                     rcon_next     = 1'b1;
                   end
@@ -265,8 +271,9 @@ module aes_key_mem(
                     prev_key1_we  = 1'b1;
                     rcon_next     = 1'b1;
                   end
-          //     end
+            //  end
 
+          // Disable the different key length, only keep 128
           //   AES_256_BIT_KEY:
           //     begin
           //       if (round_ctr_reg == 0)
@@ -313,7 +320,6 @@ module aes_key_mem(
           //     begin
           //     end
           // endcase // case (keylen)
-        end
         end
     end // round_key_gen
 
