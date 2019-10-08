@@ -47,7 +47,7 @@ module aes_core(
                 output wire           ready,
 
                 // input wire [255 : 0]  key,
-                input wire [127 : 0]  key,
+                // input wire [127 : 0]  key,
                 // input wire            keylen,
 
                 input wire [127 : 0]  block,
@@ -57,6 +57,11 @@ module aes_core(
 
 
 
+  //----------------------------------------------------------------
+  // AES Key.
+  //----------------------------------------------------------------
+  wire [127 : 0] key;
+  assign key = 256'h2b7e151628aed2a6abf7158809cf4f3c;
 
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
